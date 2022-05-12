@@ -1,10 +1,14 @@
 import { createElement } from '../render.js';
-import { humanizeFilmReleaseDate } from '../util.js';
+import { getYearFromDate } from '../util.js';
+import { getDurationInHours } from '../util.js';
+import { getDurationInMins } from '../util.js';
 
 const createFilmCardTemplate = (film) => {
   const { comments, filmInfo} = film;
   const { title, totalRating, poster, release, runtime, genre, description } = filmInfo;
-  const releaseDate = humanizeFilmReleaseDate(release.date);
+  const releaseDate = getYearFromDate(release.date);
+  const hours = getDurationInHours(runtime);
+  const mins = getDurationInMins(runtime);
 
   return (
     `<article class="film-card">
@@ -13,7 +17,7 @@ const createFilmCardTemplate = (film) => {
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
           <span class="film-card__year">${releaseDate}</span>
-          <span class="film-card__duration">${runtime}m</span>
+          <span class="film-card__duration">${hours}h ${mins}m</span>
           <span class="film-card__genre">${genre}</span>
         </p>
         <img src="./${poster}" alt="" class="film-card__poster">
@@ -33,7 +37,6 @@ export default class FilmCardView {
   constructor(film) {
     this.film = film;
   }
-
 
   getTemplate() {
     return createFilmCardTemplate(this.film);

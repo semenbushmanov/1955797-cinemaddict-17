@@ -25,7 +25,9 @@ const FILMS_DESCRIPTIONS = [
       },
       'runtime': 77,
       'genre': [
-        'Comedy'
+        'Comedy',
+        'Romance',
+        'Mystery'
       ],
       'description': 'Oscar-winning film, a war drama about two young people, from the creators of timeless classic "Nu, Pogodi!" and "Alice in Wonderland", with the best fight scenes since Bruce Lee.'
     },
@@ -60,7 +62,8 @@ const FILMS_DESCRIPTIONS = [
       },
       'runtime': 77,
       'genre': [
-        'Romance'
+        'Romance',
+        'Comedy'
       ],
       'description': 'Abbati, medico, patrono que intima pande. Abyssus abyssum invocat. Aegroto dum anima est, spes est. Difficile est longum subito deponere amorem.'
     },

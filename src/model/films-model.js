@@ -9,7 +9,7 @@ export default class FilmsModel {
 }
 
 export class CommentsModel {
-  comments = Array.from({ length: 3 }, generateComment);
+  comments = Array.from({ length: 4 }, generateComment);
 
   getComments = () => this.comments;
 }
