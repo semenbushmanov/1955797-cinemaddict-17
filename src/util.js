@@ -7,3 +7,4 @@ export const humanizeCommentDate = (date) => dayjs(date).format('YYYY/MM/DD HH:m
 export const getYearFromDate = (date) => dayjs(date).format('YYYY');
 export const getDurationInHours = (mins) => Math.floor(mins / 60);
 export const getDurationInMins = (mins) => mins % 60;
+export const isEscKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
