@@ -3,13 +3,17 @@ import { generateComment } from '../mock/film-data.js';
 
 
 export default class FilmsModel {
-  films = Array.from({ length: 5 }, generateFilmDescription);
+  #films = Array.from({ length: 5 }, generateFilmDescription);
 
-  getFilms = () => this.films;
+  get films() {
+    return this.#films;
+  }
 }
 
 export class CommentsModel {
-  comments = Array.from({ length: 4 }, generateComment);
+  #comments = Array.from({ length: 4 }, generateComment);
 
-  getComments = () => this.comments;
+  get comments() {
+    return this.#comments;
+  }
 }
