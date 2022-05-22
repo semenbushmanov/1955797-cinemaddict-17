@@ -9,6 +9,7 @@ const createFilmCardTemplate = (film) => {
   const releaseDate = getYearFromDate(release.date);
   const hours = getDurationInHours(runtime);
   const mins = getDurationInMins(runtime);
+  const shortDescription = description.length > 140 ? `${description.substring(0, 139)}...`: description;
 
   return (
     `<article class="film-card">
@@ -18,10 +19,10 @@ const createFilmCardTemplate = (film) => {
         <p class="film-card__info">
           <span class="film-card__year">${releaseDate}</span>
           <span class="film-card__duration">${hours}h ${mins}m</span>
-          <span class="film-card__genre">${genre}</span>
+          <span class="film-card__genre">${genre.join(' ')}</span>
         </p>
         <img src="./${poster}" alt="" class="film-card__poster">
-        <p class="film-card__description">${description}</p>
+        <p class="film-card__description">${shortDescription}</p>
         <span class="film-card__comments">${comments.length} comments</span>
       </a>
       <div class="film-card__controls">
@@ -34,23 +35,26 @@ const createFilmCardTemplate = (film) => {
 };
 
 export default class FilmCardView {
+  #element = null;
+  #film = null;
+
   constructor(film) {
-    this.film = film;
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createFilmCardTemplate(this.film);
+  get template() {
+    return createFilmCardTemplate(this.#film);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

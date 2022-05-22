@@ -3,23 +3,26 @@ import { createElement } from '../render.js';
 const createPopupGenreTemplate = (genre) => `<span class="film-details__genre">${genre}</span>`;
 
 export default class PopupGenreView {
+  #element = null;
+  #genre = null;
+
   constructor(genre) {
-    this.genre = genre;
+    this.#genre = genre;
   }
 
-  getTemplate() {
-    return createPopupGenreTemplate(this.genre);
+  get template() {
+    return createPopupGenreTemplate(this.#genre);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
