@@ -9,6 +9,8 @@ import PopupView from '../view/popup-view.js';
 import PopupCommentView from '../view/popup-comment-view.js';
 import PopupGenreView from '../view/popup-genre-view.js';
 
+const FILM_COUNT_PER_STEP = 5;
+
 export default class ContentPresenter {
   #contentContainer = null;
   #filmsModel = null;
@@ -16,9 +18,11 @@ export default class ContentPresenter {
 
   #filmsListComponent = new FilmsListView();
   #filmsContainerComponent = new FilmsContainerView();
+  #showMoreButtonComponent = new ShowMoreButtonView();
 
   #filmCards = [];
   #comments = [];
+  #renderedFilmCount = FILM_COUNT_PER_STEP;
 
   init = (contentContainer, filmsModel, commentsModel) => {
     this.#contentContainer = contentContainer;
@@ -31,11 +35,28 @@ export default class ContentPresenter {
     render(this.#filmsListComponent, this.#contentContainer);
     render(this.#filmsContainerComponent, this.#filmsListComponent.element);
 
-    for (let i = 0; i < this.#filmCards.length; i++) {
+    for (let i = 0; i < Math.min(this.#filmCards.length, FILM_COUNT_PER_STEP); i++) {
       this.#renderFilmCard(this.#filmCards[i]);
     }
 
-    render(new ShowMoreButtonView(), this.#filmsListComponent.element);
+    if (this.#filmCards.length > FILM_COUNT_PER_STEP) {
+      render(this.#showMoreButtonComponent, this.#filmsListComponent.element);
+
+      this.#showMoreButtonComponent.element.addEventListener('click', this.#handleShowMoreButtonClick);
+    }
+  };
+
+  #handleShowMoreButtonClick = (evt) => {
+    evt.preventDefault();
+    this.#filmCards.slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
+      .forEach((film) => this.#renderFilmCard(film));
+
+    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
+
+    if (this.#renderedFilmCount >= this.#filmCards.length) {
+      this.#showMoreButtonComponent.element.remove();
+      this.#showMoreButtonComponent.removeElement();
+    }
   };
 
   #renderFilmCard = (film) => {
