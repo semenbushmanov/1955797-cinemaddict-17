@@ -8,6 +8,9 @@ import ShowMoreButtonView from '../view/show-more-button-view.js';
 import PopupView from '../view/popup-view.js';
 import PopupCommentView from '../view/popup-comment-view.js';
 import PopupGenreView from '../view/popup-genre-view.js';
+import NoFilmsView from '../view/no-films-view.js';
+
+const FILM_COUNT_PER_STEP = 5;
 
 export default class ContentPresenter {
   #contentContainer = null;
@@ -16,26 +19,36 @@ export default class ContentPresenter {
 
   #filmsListComponent = new FilmsListView();
   #filmsContainerComponent = new FilmsContainerView();
+  #showMoreButtonComponent = new ShowMoreButtonView();
 
   #filmCards = [];
   #comments = [];
+  #renderedFilmCount = FILM_COUNT_PER_STEP;
 
-  init = (contentContainer, filmsModel, commentsModel) => {
+  constructor(contentContainer, filmsModel, commentsModel) {
     this.#contentContainer = contentContainer;
     this.#filmsModel = filmsModel;
-    this.#filmCards = [...this.#filmsModel.films];
     this.#commentsModel = commentsModel;
+  }
+
+  init = () => {
+    this.#filmCards = [...this.#filmsModel.films];
     this.#comments = [...this.#commentsModel.comments];
 
-    render(new SortView(),this.#contentContainer);
-    render(this.#filmsListComponent, this.#contentContainer);
-    render(this.#filmsContainerComponent, this.#filmsListComponent.element);
+    this.#renderContent();
+  };
 
-    for (let i = 0; i < this.#filmCards.length; i++) {
-      this.#renderFilmCard(this.#filmCards[i]);
+  #handleShowMoreButtonClick = (evt) => {
+    evt.preventDefault();
+    this.#filmCards.slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
+      .forEach((film) => this.#renderFilmCard(film));
+
+    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
+
+    if (this.#renderedFilmCount >= this.#filmCards.length) {
+      this.#showMoreButtonComponent.element.remove();
+      this.#showMoreButtonComponent.removeElement();
     }
-
-    render(new ShowMoreButtonView(), this.#filmsListComponent.element);
   };
 
   #renderFilmCard = (film) => {
@@ -82,5 +95,25 @@ export default class ContentPresenter {
     });
 
     render(filmCardComponent, this.#filmsContainerComponent.element);
+  };
+
+  #renderContent =() => {
+    if (this.#filmCards.length === 0) {
+      render(new NoFilmsView(), this.#contentContainer);
+    } else {
+      render(new SortView(),this.#contentContainer);
+      render(this.#filmsListComponent, this.#contentContainer);
+      render(this.#filmsContainerComponent, this.#filmsListComponent.element);
+
+      for (let i = 0; i < Math.min(this.#filmCards.length, FILM_COUNT_PER_STEP); i++) {
+        this.#renderFilmCard(this.#filmCards[i]);
+      }
+
+      if (this.#filmCards.length > FILM_COUNT_PER_STEP) {
+        render(this.#showMoreButtonComponent, this.#filmsListComponent.element);
+
+        this.#showMoreButtonComponent.element.addEventListener('click', this.#handleShowMoreButtonClick);
+      }
+    }
   };
 }

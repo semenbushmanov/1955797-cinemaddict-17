@@ -3,7 +3,7 @@ import { generateComment } from '../mock/film-data.js';
 
 
 export default class FilmsModel {
-  #films = Array.from({ length: 5 }, generateFilmDescription);
+  #films = Array.from({ length: 23 }, generateFilmDescription);
 
   get films() {
     return this.#films;
