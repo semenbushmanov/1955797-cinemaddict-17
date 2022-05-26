@@ -1,5 +1,5 @@
-import { render } from '../framework/render.js';
-import { isEscKey } from '../util.js';
+import { render, remove } from '../framework/render.js';
+import { isEscKey } from '../utils/common.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
 import FilmsContainerView from '../view/films-container-view.js';
@@ -45,8 +45,7 @@ export default class ContentPresenter {
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
 
     if (this.#renderedFilmCount >= this.#filmCards.length) {
-      this.#showMoreButtonComponent.element.remove();
-      this.#showMoreButtonComponent.removeElement();
+      remove(this.#showMoreButtonComponent);
     }
   };
 
@@ -66,12 +65,12 @@ export default class ContentPresenter {
     }
 
     const openPopup = () => {
-      document.body.appendChild(popupComponent.element);
+      render(popupComponent, document.body);
       document.body.classList.add('hide-overflow');
     };
 
     const closePopup = () => {
-      document.body.removeChild(popupComponent.element);
+      remove(popupComponent);
       document.body.classList.remove('hide-overflow');
     };
 

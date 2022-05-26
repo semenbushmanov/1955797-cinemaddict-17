@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeFilmReleaseDate } from '../util.js';
-import { getDurationInHours } from '../util.js';
-import { getDurationInMins } from '../util.js';
+import { humanizeFilmReleaseDate } from '../utils/film.js';
+import { getDurationInHours } from '../utils/film.js';
+import { getDurationInMins } from '../utils/film.js';
 
 const createPopupTemplate = (film) => {
   const { comments, filmInfo} = film;
