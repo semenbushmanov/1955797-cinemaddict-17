@@ -1,4 +1,4 @@
-import { render } from './render.js';
+import { render } from './framework/render.js';
 import UserProfileView from './view/user-profile-view.js';
 import NavigationView from './view/navigation-view.js';
 import StatisticsView from './view/statistics-view.js';

@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 import { isEscKey } from '../util.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
