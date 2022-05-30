@@ -1,7 +1,7 @@
-import { createElement } from '../render.js';
-import { humanizeFilmReleaseDate } from '../util.js';
-import { getDurationInHours } from '../util.js';
-import { getDurationInMins } from '../util.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { humanizeFilmReleaseDate } from '../utils/film.js';
+import { getDurationInHours } from '../utils/film.js';
+import { getDurationInMins } from '../utils/film.js';
 
 const createPopupTemplate = (film) => {
   const { comments, filmInfo} = film;
@@ -122,11 +122,11 @@ const createPopupTemplate = (film) => {
   );
 };
 
-export default class PopupView {
-  #element = null;
+export default class PopupView extends AbstractView {
   #film = null;
 
   constructor(film) {
+    super();
     this.#film = film;
   }
 
@@ -134,15 +134,13 @@ export default class PopupView {
     return createPopupTemplate(this.#film);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#handleClick);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #handleClick = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 }

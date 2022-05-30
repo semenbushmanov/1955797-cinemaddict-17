@@ -1,7 +1,7 @@
-import { createElement } from '../render.js';
-import { getYearFromDate } from '../util.js';
-import { getDurationInHours } from '../util.js';
-import { getDurationInMins } from '../util.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { getYearFromDate } from '../utils/film.js';
+import { getDurationInHours } from '../utils/film.js';
+import { getDurationInMins } from '../utils/film.js';
 
 const createFilmCardTemplate = (film) => {
   const { comments, filmInfo} = film;
@@ -34,11 +34,11 @@ const createFilmCardTemplate = (film) => {
   );
 };
 
-export default class FilmCardView {
-  #element = null;
+export default class FilmCardView extends AbstractView {
   #film = null;
 
   constructor(film) {
+    super();
     this.#film = film;
   }
 
@@ -46,15 +46,13 @@ export default class FilmCardView {
     return createFilmCardTemplate(this.#film);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.addEventListener('click', this.#handleClick);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #handleClick = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 }
