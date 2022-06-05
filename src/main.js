@@ -5,6 +5,7 @@ import StatisticsView from './view/statistics-view.js';
 import ContentPresenter from './presenter/content-presenter.js';
 import FilmsModel from './model/films-model.js';
 import { CommentsModel } from './model/films-model.js';
+import { generateFiltersData } from './mock/filter.js';
 
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
@@ -13,8 +14,10 @@ const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel();
 const contentPresenter = new ContentPresenter(siteMainElement, filmsModel, commentsModel);
 
+const filtersData = generateFiltersData(filmsModel.films);
+
 render(new UserProfileView(), siteHeaderElement);
-render(new NavigationView(), siteMainElement);
-render(new StatisticsView(), siteFooterStatisticsElement);
+render(new NavigationView(filtersData), siteMainElement);
+render(new StatisticsView(filtersData), siteFooterStatisticsElement);
 
 contentPresenter.init();

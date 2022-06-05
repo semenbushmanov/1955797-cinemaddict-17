@@ -104,9 +104,9 @@ const FILMS_DESCRIPTIONS = [
     },
     'userDetails': {
       'watchlist': false,
-      'alreadyWatched': true,
+      'alreadyWatched': false,
       'watchingDate': '2020-09-12T11:11:52.554Z',
-      'favorite': false
+      'favorite': true
     }
   }
 ];
