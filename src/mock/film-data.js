@@ -1,4 +1,5 @@
 import { getRandomItem } from '../utils/common.js';
+import { nanoid } from 'nanoid';
 
 const FILMS_DESCRIPTIONS = [
   {
@@ -143,5 +144,9 @@ const FILMS_COMMENTS = [
 ];
 
 
-export const generateFilmDescription = () => getRandomItem(FILMS_DESCRIPTIONS);
+export const generateFilmDescription = () => {
+  const randomFilm = getRandomItem(FILMS_DESCRIPTIONS);
+  return {...randomFilm, id: nanoid()};
+};
+
 export const generateComment = () => getRandomItem(FILMS_COMMENTS);
