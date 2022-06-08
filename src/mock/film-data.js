@@ -1,4 +1,5 @@
 import { getRandomItem } from '../utils/common.js';
+import { getRandomNumber } from '../utils/common.js';
 import { nanoid } from 'nanoid';
 
 const FILMS_DESCRIPTIONS = [
@@ -146,7 +147,12 @@ const FILMS_COMMENTS = [
 
 export const generateFilmDescription = () => {
   const randomFilm = getRandomItem(FILMS_DESCRIPTIONS);
-  return {...randomFilm, id: nanoid()};
+  const randomFilmDescription = {...randomFilm, id: nanoid()};
+  randomFilmDescription.filmInfo = {... randomFilmDescription.filmInfo};
+  randomFilmDescription.filmInfo.totalRating = getRandomNumber(0, 100) / 10;
+  randomFilmDescription.filmInfo.release = {... randomFilmDescription.filmInfo.release};
+  randomFilmDescription.filmInfo.release.date = `${getRandomNumber(1970, 2025)}-11-12T00:00:00.000Z`;
+  return randomFilmDescription;
 };
 
 export const generateComment = () => getRandomItem(FILMS_COMMENTS);

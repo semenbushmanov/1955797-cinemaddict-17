@@ -1,5 +1,7 @@
-import { render, remove } from '../framework/render.js';
+import { render, remove, replace } from '../framework/render.js';
 import { updateItem } from '../utils/common.js';
+import { sortByDate, sortByRating } from '../utils/film.js';
+import { SortType } from '../const.js';
 import SortView from '../view/sort-view.js';
 import FilmsListView from '../view/films-list-view.js';
 import FilmsContainerView from '../view/films-container-view.js';
@@ -13,16 +15,18 @@ export default class ContentPresenter {
   #contentContainer = null;
   #filmsModel = null;
   #commentsModel = null;
+  #sortComponent = null;
+
+  #filmCards = [];
+  #comments = [];
+  #originalFilmCards = [];
+  #renderedFilmCount = FILM_COUNT_PER_STEP;
+  #currentSortType = SortType.DEFAULT;
 
   #filmsListComponent = new FilmsListView();
   #filmsContainerComponent = new FilmsContainerView();
   #showMoreButtonComponent = new ShowMoreButtonView();
-  #sortComponent = new SortView();
   #noFilmsComponent = new NoFilmsView();
-
-  #filmCards = [];
-  #comments = [];
-  #renderedFilmCount = FILM_COUNT_PER_STEP;
 
   #filmPresenter = new Map();
 
@@ -35,12 +39,14 @@ export default class ContentPresenter {
   init = () => {
     this.#filmCards = [...this.#filmsModel.films];
     this.#comments = [...this.#commentsModel.comments];
+    this.#originalFilmCards = [...this.#filmsModel.films];
 
     this.#renderContent();
   };
 
   #handleFilmChange = (updatedFilm) => {
     this.#filmCards = updateItem(this.#filmCards, updatedFilm);
+    this.#originalFilmCards = updateItem(this.#originalFilmCards, updatedFilm);
     this.#filmPresenter.get(updatedFilm.id).init(updatedFilm, this.#comments);
   };
 
@@ -57,6 +63,32 @@ export default class ContentPresenter {
     this.#filmPresenter.forEach((presenter) => presenter.resetView());
   };
 
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortFilms(sortType);
+    this.#clearFilmsList();
+    this.#renderFilmsList();
+    this.#renderSort();
+  };
+
+  #sortFilms = (sortType) => {
+    switch (sortType) {
+      case SortType.DATE:
+        this.#filmCards.sort(sortByDate);
+        break;
+      case SortType.RATING:
+        this.#filmCards.sort(sortByRating);
+        break;
+      default:
+        this.#filmCards = [...this.#originalFilmCards];
+    }
+
+    this.#currentSortType = sortType;
+  };
+
   #renderFilms = (from, to) => {
     this.#filmCards
       .slice(from, to)
@@ -70,7 +102,19 @@ export default class ContentPresenter {
   };
 
   #renderSort = () => {
-    render(this.#sortComponent,this.#contentContainer);
+    const previousSortComponent = this.#sortComponent;
+
+    if (previousSortComponent === null) {
+      this.#sortComponent = new SortView(this.#currentSortType);
+      render(this.#sortComponent,this.#contentContainer);
+      this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+      return;
+    }
+
+    this.#sortComponent = new SortView(this.#currentSortType);
+    replace(this.#sortComponent, previousSortComponent);
+    this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+    remove(previousSortComponent);
   };
 
   #renderNoFilms = () => {
