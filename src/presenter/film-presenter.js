@@ -2,8 +2,6 @@ import { render, remove, replace } from '../framework/render.js';
 import { isEscKey } from '../utils/common.js';
 import FilmCardView from '../view/film-card-view.js';
 import PopupView from '../view/popup-view.js';
-import PopupCommentView from '../view/popup-comment-view.js';
-import PopupGenreView from '../view/popup-genre-view.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -13,9 +11,6 @@ const Mode = {
 export default class FilmPresenter {
   #filmCardComponent = null;
   #popupComponent = null;
-  #commentList = null;
-  #genres = null;
-  #genreCell = null;
   #filmsContainerComponent = null;
   #film = null;
   #comments = null;
@@ -38,7 +33,7 @@ export default class FilmPresenter {
     const previousPopupComponent = this.#popupComponent;
 
     this.#filmCardComponent = new FilmCardView(this.#film);
-    this.#createPopup();
+    this.#popupComponent = new PopupView(this.#film, this.#comments);
 
     this.#filmCardComponent.setClickHandler(this.#handleFilmCardClick);
 
@@ -76,21 +71,6 @@ export default class FilmPresenter {
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
       this.#closePopup();
-    }
-  };
-
-  #createPopup = () => {
-    this.#popupComponent = new PopupView(this.#film);
-    this.#commentList = this.#popupComponent.element.querySelector('.film-details__comments-list');
-    this.#genres = this.#film.filmInfo.genre;
-    this.#genreCell = this.#popupComponent.element.querySelector('#genre-cell');
-
-    for (let i =0; i < this.#comments.length; i++) {
-      render(new PopupCommentView(this.#comments[i]), this.#commentList);
-    }
-
-    for (let i =0; i < this.#genres.length; i++) {
-      render(new PopupGenreView(this.#genres[i]), this.#genreCell);
     }
   };
 
