@@ -1,14 +1,13 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { getYearFromDate } from '../utils/film.js';
-import { getDurationInHours } from '../utils/film.js';
-import { getDurationInMins } from '../utils/film.js';
+import { getDuration } from '../utils/film.js';
+
 
 const createFilmCardTemplate = (film) => {
   const { comments, filmInfo, userDetails } = film;
   const { title, totalRating, poster, release, runtime, genre, description } = filmInfo;
   const releaseDate = getYearFromDate(release.date);
-  const hours = getDurationInHours(runtime);
-  const mins = getDurationInMins(runtime);
+  const duration = getDuration(runtime);
   const shortDescription = description.length > 140 ? `${description.substring(0, 139)}...`: description;
 
   const watchlistClassName = userDetails.watchlist
@@ -30,7 +29,7 @@ const createFilmCardTemplate = (film) => {
         <p class="film-card__rating">${totalRating}</p>
         <p class="film-card__info">
           <span class="film-card__year">${releaseDate}</span>
-          <span class="film-card__duration">${hours}h ${mins}m</span>
+          <span class="film-card__duration">${duration}</span>
           <span class="film-card__genre">${genre[0]}</span>
         </p>
         <img src="./${poster}" alt="" class="film-card__poster">
