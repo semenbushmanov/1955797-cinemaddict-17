@@ -1,10 +1,11 @@
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 export const humanizeFilmReleaseDate = (date) => dayjs(date).format('DD MMMM YYYY');
-export const humanizeCommentDate = (date) => dayjs(date).format('YYYY/MM/DD HH:mm');
+export const humanizeCommentDate = (date) => dayjs(date).fromNow();
 export const getYearFromDate = (date) => dayjs(date).format('YYYY');
-export const getDurationInHours = (mins) => Math.floor(mins / 60);
-export const getDurationInMins = (mins) => mins % 60;
+export const getDuration = (mins) => `${Math.floor(mins / 60)}h ${mins % 60}m`;
 
 const getWeightForNullDate = (dateA, dateB) => {
   if (dateA === null && dateB === null) {

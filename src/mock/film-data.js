@@ -62,7 +62,7 @@ const FILMS_DESCRIPTIONS = [
         'date': '2017-01-13T00:00:00.000Z',
         'releaseCountry': 'USA'
       },
-      'runtime': 77,
+      'runtime': 94,
       'genre': [
         'Romance',
         'Comedy'
@@ -98,7 +98,7 @@ const FILMS_DESCRIPTIONS = [
         'date': '2015-11-12T00:00:00.000Z',
         'releaseCountry': 'Estonia'
       },
-      'runtime': 77,
+      'runtime': 132,
       'genre': [
         'Comedy'
       ],
@@ -125,14 +125,14 @@ const FILMS_COMMENTS = [
     'id': '48',
     'author': 'Bobby',
     'comment': 'Ignavum fortuna repugnat.',
-    'date': '2017-12-11T13:09:22.554Z',
+    'date': '2022-06-10T13:09:22.554Z',
     'emotion': 'angry'
   },
   {
     'id': '55',
     'author': 'Tom Smith',
     'comment': 'Intemperans adulescentia effetum corpus tradit senectuti.',
-    'date': '2022-01-11T15:10:15.554Z',
+    'date': '2022-06-12T14:34:15.554Z',
     'emotion': 'puke'
   },
   {

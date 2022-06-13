@@ -79,6 +79,7 @@ export default class FilmPresenter {
     this.#popupComponent.element.scroll(0, this.#popupScroll);
     document.body.classList.add('hide-overflow');
     this.#mode = Mode.POPUP;
+    document.addEventListener('keydown', this.#handleEscKeyDown);
   };
 
   #closePopup = () => {
@@ -87,25 +88,23 @@ export default class FilmPresenter {
     this.#mode = Mode.DEFAULT;
     this.#popupScroll = 0;
     this.#changeData(this.#film); // restore popupComponent with all handlers after complete removal by command "remove(this.#popupComponent)" for future use.
+    document.removeEventListener('keydown', this.#handleEscKeyDown);
   };
 
   #handleEscKeyDown = (evt) => {
     if (isEscKey(evt)) {
       evt.preventDefault();
       this.#closePopup();
-      document.removeEventListener('keydown', this.#handleEscKeyDown);
     }
   };
 
   #handleFilmCardClick = () => {
     this.#changeMode();
     this.#openPopup();
-    document.addEventListener('keydown', this.#handleEscKeyDown);
   };
 
   #handlePopupCloseButtonClick = () => {
     this.#closePopup();
-    document.removeEventListener('keydown', this.#handleEscKeyDown);
   };
 
   #handleWatchlistClick = () => {

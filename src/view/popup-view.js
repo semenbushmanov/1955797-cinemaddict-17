@@ -1,7 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate } from '../utils/film.js';
-import { getDurationInHours } from '../utils/film.js';
-import { getDurationInMins } from '../utils/film.js';
+import { getDuration } from '../utils/film.js';
 import { humanizeCommentDate } from '../utils/film.js';
 
 
@@ -9,8 +8,7 @@ const createPopupTemplate = (film, commentaries) => {
   const { comments, filmInfo, userDetails } = film;
   const { title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors, release, runtime, genre,description } = filmInfo;
   const releaseDate = humanizeFilmReleaseDate(release.date);
-  const hours = getDurationInHours(runtime);
-  const mins = getDurationInMins(runtime);
+  const duration = getDuration(runtime);
 
   const createGenreTemplate = (filmGenre) => `<span class="film-details__genre">${filmGenre}</span>`;
 
@@ -27,7 +25,7 @@ const createPopupTemplate = (film, commentaries) => {
           <p class="film-details__comment-text">${comment}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
-            <span class="film-details__comment-day">2${commentDate}</span>
+            <span class="film-details__comment-day">${commentDate}</span>
             <button class="film-details__comment-delete">Delete</button>
           </p>
         </div>
@@ -96,7 +94,7 @@ const createPopupTemplate = (film, commentaries) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
-                  <td class="film-details__cell">${hours}h ${mins}m</td>
+                  <td class="film-details__cell">${duration}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Country</td>

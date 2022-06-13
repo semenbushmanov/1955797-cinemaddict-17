@@ -3,6 +3,7 @@ import { updateItem } from '../utils/common.js';
 import { sortByDate, sortByRating } from '../utils/film.js';
 import { SortType } from '../const.js';
 import SortView from '../view/sort-view.js';
+import SectionFilmsView from '../view/section-films-view.js';
 import FilmsListView from '../view/films-list-view.js';
 import FilmsContainerView from '../view/films-container-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
@@ -23,6 +24,7 @@ export default class ContentPresenter {
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
 
+  #sectionFilmsComponent = new SectionFilmsView();
   #filmsListComponent = new FilmsListView();
   #filmsContainerComponent = new FilmsContainerView();
   #showMoreButtonComponent = new ShowMoreButtonView();
@@ -122,7 +124,8 @@ export default class ContentPresenter {
   };
 
   #renderFilmsListContainer = () => {
-    render(this.#filmsListComponent, this.#contentContainer);
+    render(this.#sectionFilmsComponent, this.#contentContainer);
+    render(this.#filmsListComponent, this.#sectionFilmsComponent.element);
     render(this.#filmsContainerComponent, this.#filmsListComponent.element);
   };
 
