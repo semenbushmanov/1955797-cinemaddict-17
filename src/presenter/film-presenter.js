@@ -2,6 +2,7 @@ import { render, remove, replace } from '../framework/render.js';
 import { isEscKey } from '../utils/common.js';
 import FilmCardView from '../view/film-card-view.js';
 import PopupView from '../view/popup-view.js';
+import { CommentsModel } from '../model/comments-model.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -16,6 +17,7 @@ export default class FilmPresenter {
   #comments = null;
   #changeData = null;
   #changeMode = null;
+  #commentsModel = null;
   #mode = Mode.DEFAULT;
   #popupScroll = 0;
 
@@ -25,9 +27,10 @@ export default class FilmPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (film, comments) => {
+  init = (film) => {
     this.#film = film;
-    this.#comments = comments;
+    this.#commentsModel = new CommentsModel();
+    this.#comments = [...this.#commentsModel.comments];
 
     const previousFilmCardComponent = this.#filmCardComponent;
     const previousPopupComponent = this.#popupComponent;

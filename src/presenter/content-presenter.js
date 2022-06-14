@@ -32,15 +32,13 @@ export default class ContentPresenter {
 
   #filmPresenter = new Map();
 
-  constructor(contentContainer, filmsModel, commentsModel) {
+  constructor(contentContainer, filmsModel) {
     this.#contentContainer = contentContainer;
     this.#filmsModel = filmsModel;
-    this.#commentsModel = commentsModel;
   }
 
   init = () => {
     this.#filmCards = [...this.#filmsModel.films];
-    this.#comments = [...this.#commentsModel.comments];
     this.#originalFilmCards = [...this.#filmsModel.films];
 
     this.#renderContent();
@@ -49,7 +47,7 @@ export default class ContentPresenter {
   #handleFilmChange = (updatedFilm) => {
     this.#filmCards = updateItem(this.#filmCards, updatedFilm);
     this.#originalFilmCards = updateItem(this.#originalFilmCards, updatedFilm);
-    this.#filmPresenter.get(updatedFilm.id).init(updatedFilm, this.#comments);
+    this.#filmPresenter.get(updatedFilm.id).init(updatedFilm);
   };
 
   #handleShowMoreButtonClick = () => {
@@ -99,7 +97,7 @@ export default class ContentPresenter {
 
   #renderFilmCard = (film) => {
     const filmPresenter = new FilmPresenter(this.#filmsContainerComponent, this.#handleFilmChange, this.#handleModeChange);
-    filmPresenter.init(film, this.#comments);
+    filmPresenter.init(film);
     this.#filmPresenter.set(film.id, filmPresenter);
   };
 
