@@ -4,6 +4,7 @@ import FilmCardView from '../view/film-card-view.js';
 import PopupView from '../view/popup-view.js';
 import { CommentsModel } from '../model/comments-model.js';
 import { UserAction, UpdateType } from '../const.js';
+import { nanoid } from 'nanoid';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -18,18 +19,18 @@ export default class FilmPresenter {
   #changeData = null;
   #changeMode = null;
   #commentsModel = null;
-  #handleModelEvent = null;
+  #handleFilmsModelEvent = null;
   #mode = Mode.DEFAULT;
   #popupScroll = 0;
 
-  constructor(filmsContainer, changeData, changeMode, handleModelEvent) {
+  constructor(filmsContainer, changeData, changeMode, handleFilmsModelEvent) {
     this.#filmsContainerComponent = filmsContainer.element;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
-    this.#handleModelEvent = handleModelEvent;
+    this.#handleFilmsModelEvent = handleFilmsModelEvent;
 
     this.#commentsModel = new CommentsModel();
-    this.#commentsModel.addObserver(this.#handleModelEvent);
+    this.#commentsModel.addObserver(this.#handleCommentsModelEvent);
   }
 
   get comments() {
@@ -56,6 +57,8 @@ export default class FilmPresenter {
     this.#popupComponent.setWatchlistClickHandler(this.#handleWatchlistClick);
     this.#popupComponent.setHistoryClickHandler(this.#handleHistoryClick);
     this.#popupComponent.setFavoritesClickHandler(this.#handleFavoritesClick);
+    this.#popupComponent.setDeleteClickHandlers(this.#handleCommentDelete);
+    this.#popupComponent.setCommentSubmitHandler(this.#handleCommentSubmit);
 
     if (previousFilmCardComponent === null || previousPopupComponent === null) {
       render(this.#filmCardComponent, this.#filmsContainerComponent);
@@ -143,4 +146,29 @@ export default class FilmPresenter {
       {...this.#film, userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}},
     );
   };
+
+  #handleCommentsModelEvent = (updateType) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#handleFilmsModelEvent(UpdateType.PATCH, this.#film);
+        break;
+    }
+  };
+
+  #handleCommentDelete = (commentId) => {
+    this.#commentsModel.deleteComment(UpdateType.PATCH, commentId);
+  };
+
+  #handleCommentSubmit = (localComment) => {
+    const comment = {
+      'id': nanoid(),
+      'author': 'Leo Malcolm',
+      'comment': localComment.comment,
+      'date': new Date().toISOString(),
+      'emotion': localComment.emotion
+    };
+
+    this.#commentsModel.addComment(UpdateType.PATCH, comment);
+  };
+
 }

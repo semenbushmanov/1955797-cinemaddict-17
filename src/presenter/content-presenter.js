@@ -25,13 +25,13 @@ export default class ContentPresenter {
   #filmsContainerComponent = new FilmsContainerView();
   #noFilmsComponent = new NoFilmsView();
 
-  #filmPresenter = new Map();
+  #filmPresentersMap = new Map();
 
   constructor(contentContainer, filmsModel) {
     this.#contentContainer = contentContainer;
     this.#filmsModel = filmsModel;
 
-    this.#filmsModel.addObserver(this.#handleModelEvent);
+    this.#filmsModel.addObserver(this.#handleFilmsModelEvent);
   }
 
   get films() {
@@ -63,10 +63,10 @@ export default class ContentPresenter {
     }
   };
 
-  #handleModelEvent = (updateType, data) => {
+  #handleFilmsModelEvent = (updateType, data) => {
     switch (updateType) {
-      case UpdateType.PATCH:        
-        this.#filmPresenter.get(data.id).init(data);
+      case UpdateType.PATCH:
+        this.#filmPresentersMap.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
         this.#clearContent();
@@ -93,7 +93,7 @@ export default class ContentPresenter {
   };
 
   #handleModeChange = () => {
-    this.#filmPresenter.forEach((presenter) => presenter.resetView());
+    this.#filmPresentersMap.forEach((presenter) => presenter.resetView());
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -111,9 +111,9 @@ export default class ContentPresenter {
   };
 
   #renderFilmCard = (film) => {
-    const filmPresenter = new FilmPresenter(this.#filmsContainerComponent, this.#handleViewAction, this.#handleModeChange, this.#handleModelEvent);
+    const filmPresenter = new FilmPresenter(this.#filmsContainerComponent, this.#handleViewAction, this.#handleModeChange, this.#handleFilmsModelEvent);
     filmPresenter.init(film);
-    this.#filmPresenter.set(film.id, filmPresenter);
+    this.#filmPresentersMap.set(film.id, filmPresenter);
   };
 
   #renderSort = () => {
@@ -135,14 +135,14 @@ export default class ContentPresenter {
   #renderShowMoreButton = () => {
     this.#showMoreButtonComponent = new ShowMoreButtonView();
     this.#showMoreButtonComponent.setClickHandler(this.#handleShowMoreButtonClick);
-    render(this.#showMoreButtonComponent, this.#filmsListComponent.element);    
+    render(this.#showMoreButtonComponent, this.#filmsListComponent.element);
   };
 
   #clearContent = ({resetRenderedFilmsCount = false, resetSortType = false} = {}) => {
     const filmsCount = this.films.length;
 
-    this.#filmPresenter.forEach((presenter) => presenter.destroy());
-    this.#filmPresenter.clear();
+    this.#filmPresentersMap.forEach((presenter) => presenter.destroy());
+    this.#filmPresentersMap.clear();
 
     remove(this.#sortComponent);
     remove(this.#noFilmsComponent);

@@ -2,6 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate } from '../utils/film.js';
 import { getDuration } from '../utils/film.js';
 import { humanizeCommentDate } from '../utils/film.js';
+import { isCtrlEnterKey } from '../utils/common.js';
 
 
 const createPopupTemplate = (film, commentaries) => {
@@ -13,7 +14,7 @@ const createPopupTemplate = (film, commentaries) => {
   const createGenreTemplate = (filmGenre) => `<span class="film-details__genre">${filmGenre}</span>`;
 
   const createCommentTemplate = (commentary) => {
-    const { author, comment, date, emotion } = commentary;
+    const { id, author, comment, date, emotion } = commentary;
     const commentDate = humanizeCommentDate(date);
 
     return (
@@ -26,7 +27,7 @@ const createPopupTemplate = (film, commentaries) => {
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
             <span class="film-details__comment-day">${commentDate}</span>
-            <button class="film-details__comment-delete">Delete</button>
+            <button class="film-details__comment-delete" data-id="${id}">Delete</button>
           </p>
         </div>
       </li>`
@@ -213,12 +214,25 @@ export default class PopupView extends AbstractStatefulView {
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#handleFavoritesClick);
   };
 
+  setDeleteClickHandlers = (callback) => {
+    this._callback.deleteClick = callback;
+    const deleteLinks = this.element.querySelectorAll('.film-details__comment-delete');
+    deleteLinks.forEach((link) => link.addEventListener('click', this.#handleDeleteClick));
+  };
+
+  setCommentSubmitHandler = (callback) => {
+    this._callback.commentSubmit = callback;
+    this.element.querySelector('.film-details__comment-input').addEventListener('keydown', this.#handleCommentSubmit);
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setClickHandler(this._callback.click);
     this.setWatchlistClickHandler(this._callback.watchlistClick);
     this.setHistoryClickHandler(this._callback.historyClick);
     this.setFavoritesClickHandler(this._callback.favoritesClick);
+    this.setDeleteClickHandlers(this._callback.deleteClick);
+    this.setCommentSubmitHandler(this._callback.commentSubmit);
   };
 
   #setInnerHandlers = () => {
@@ -263,5 +277,20 @@ export default class PopupView extends AbstractStatefulView {
   #handleFavoritesClick = (evt) => {
     evt.preventDefault();
     this._callback.favoritesClick();
+  };
+
+  #handleDeleteClick = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(evt.target.dataset.id);
+  };
+
+  #handleCommentSubmit = (evt) => {
+    if (isCtrlEnterKey(evt) && Boolean(this._state.emoji) && Boolean(this._state.inputDescription)) {
+      evt.preventDefault();
+      this._callback.commentSubmit({
+        comment: this._state.inputDescription,
+        emotion: this._state.emoji
+      });
+    }
   };
 }
