@@ -3,6 +3,7 @@ import { isEscKey } from '../utils/common.js';
 import FilmCardView from '../view/film-card-view.js';
 import PopupView from '../view/popup-view.js';
 import { CommentsModel } from '../model/comments-model.js';
+import { UserAction, UpdateType } from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -14,29 +15,35 @@ export default class FilmPresenter {
   #popupComponent = null;
   #filmsContainerComponent = null;
   #film = null;
-  #comments = null;
   #changeData = null;
   #changeMode = null;
   #commentsModel = null;
+  #handleModelEvent = null;
   #mode = Mode.DEFAULT;
   #popupScroll = 0;
 
-  constructor(filmsContainer, changeData, changeMode) {
+  constructor(filmsContainer, changeData, changeMode, handleModelEvent) {
     this.#filmsContainerComponent = filmsContainer.element;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#handleModelEvent = handleModelEvent;
+
+    this.#commentsModel = new CommentsModel();
+    this.#commentsModel.addObserver(this.#handleModelEvent);
+  }
+
+  get comments() {
+    return this.#commentsModel.comments;
   }
 
   init = (film) => {
     this.#film = film;
-    this.#commentsModel = new CommentsModel();
-    this.#comments = [...this.#commentsModel.comments];
 
     const previousFilmCardComponent = this.#filmCardComponent;
     const previousPopupComponent = this.#popupComponent;
 
     this.#filmCardComponent = new FilmCardView(this.#film);
-    this.#popupComponent = new PopupView(this.#film, this.#comments);
+    this.#popupComponent = new PopupView(this.#film, this.comments);
 
     this.#filmCardComponent.setClickHandler(this.#handleFilmCardClick);
 
@@ -112,16 +119,28 @@ export default class FilmPresenter {
 
   #handleWatchlistClick = () => {
     this.#popupScroll = this.#popupComponent.element.scrollTop;
-    this.#changeData({...this.#film, userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}});
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {...this.#film, userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}},
+    );
   };
 
   #handleHistoryClick = () => {
     this.#popupScroll = this.#popupComponent.element.scrollTop;
-    this.#changeData({...this.#film, userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}});
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {...this.#film, userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}},
+    );
   };
 
   #handleFavoritesClick = () => {
     this.#popupScroll = this.#popupComponent.element.scrollTop;
-    this.#changeData({...this.#film, userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}});
+    this.#changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {...this.#film, userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}},
+    );
   };
 }
