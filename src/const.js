@@ -21,3 +21,8 @@ export const UpdateType = {
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
 };
+
+export const Mode = {
+  DEFAULT: 'DEFAULT',
+  POPUP: 'POPUP',
+};

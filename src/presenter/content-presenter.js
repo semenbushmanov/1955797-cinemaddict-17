@@ -1,6 +1,7 @@
 import { render, remove } from '../framework/render.js';
 import { sortByDate, sortByRating } from '../utils/film.js';
-import { SortType, UpdateType, UserAction } from '../const.js';
+import { filter } from '../utils/filter.js';
+import { SortType, UpdateType, UserAction, Mode } from '../const.js';
 import SortView from '../view/sort-view.js';
 import SectionFilmsView from '../view/section-films-view.js';
 import FilmsListView from '../view/films-list-view.js';
@@ -14,6 +15,7 @@ const FILM_COUNT_PER_STEP = 5;
 export default class ContentPresenter {
   #contentContainer = null;
   #filmsModel = null;
+  #filterModel = null;
   #sortComponent = null;
   #showMoreButtonComponent = null;
 
@@ -30,22 +32,28 @@ export default class ContentPresenter {
   #openPopupId = null;
   #popupScroll = null;
 
-  constructor(contentContainer, filmsModel) {
+  constructor(contentContainer, filmsModel, filterModel) {
     this.#contentContainer = contentContainer;
     this.#filmsModel = filmsModel;
+    this.#filterModel = filterModel;
 
     this.#filmsModel.addObserver(this.#handleFilmsModelEvent);
+    this.#filterModel.addObserver(this.#handleFilmsModelEvent);
   }
 
   get films() {
+    const filterType = this.#filterModel.filter;
+    const films = this.#filmsModel.films;
+    const filteredFilms = filter[filterType](films);
+
     switch (this.#currentSortType) {
       case SortType.DATE:
-        return [...this.#filmsModel.films].sort(sortByDate);
+        return filteredFilms.sort(sortByDate);
       case SortType.RATING:
-        return [...this.#filmsModel.films].sort(sortByRating);
+        return filteredFilms.sort(sortByRating);
     }
 
-    return this.#filmsModel.films;
+    return filteredFilms;
   }
 
   init = () => {
@@ -55,7 +63,7 @@ export default class ContentPresenter {
   #handleViewAction = (actionType, updateType, update, popupMode, popupScroll) => {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        if (popupMode === 'POPUP') {
+        if (popupMode === Mode.POPUP) {
           this.#openPopupId = update.id;
           this.#popupScroll = popupScroll;
         }

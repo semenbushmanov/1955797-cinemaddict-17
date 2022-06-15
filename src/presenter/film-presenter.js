@@ -3,13 +3,8 @@ import { isEscKey } from '../utils/common.js';
 import FilmCardView from '../view/film-card-view.js';
 import PopupView from '../view/popup-view.js';
 import { CommentsModel } from '../model/comments-model.js';
-import { UserAction, UpdateType } from '../const.js';
+import { UserAction, UpdateType, Mode } from '../const.js';
 import { nanoid } from 'nanoid';
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  POPUP: 'POPUP',
-};
 
 export default class FilmPresenter {
   #filmCardComponent = null;
