@@ -62,6 +62,9 @@ export default class FilmPresenter {
 
     if (previousFilmCardComponent === null || previousPopupComponent === null) {
       render(this.#filmCardComponent, this.#filmsContainerComponent);
+      if (this.#mode === Mode.POPUP) {
+        this.#openPopup();
+      }
       return;
     }
 
@@ -76,7 +79,16 @@ export default class FilmPresenter {
     remove(previousPopupComponent);
   };
 
+  setPopupOpen = () => {
+    this.#mode = Mode.POPUP;
+  };
+
+  setPopupScroll = (scroll) => {
+    this.#popupScroll = scroll;
+  };
+
   destroy = () => {
+    this.#closePopup();
     remove(this.#filmCardComponent);
     remove(this.#popupComponent);
   };
@@ -100,7 +112,7 @@ export default class FilmPresenter {
     document.body.classList.remove('hide-overflow');
     this.#mode = Mode.DEFAULT;
     this.#popupScroll = 0;
-    this.#changeData(this.#film); // restore popupComponent with all handlers after complete removal by command "remove(this.#popupComponent)" for future use.
+    this.init(this.#film); // restore popupComponent with all handlers after complete removal by command "remove(this.#popupComponent)" for future use.
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   };
 
@@ -126,6 +138,8 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film, userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}},
+      this.#mode,
+      this.#popupScroll,
     );
   };
 
@@ -135,6 +149,8 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film, userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}},
+      this.#mode,
+      this.#popupScroll,
     );
   };
 
@@ -144,22 +160,21 @@ export default class FilmPresenter {
       UserAction.UPDATE_FILM,
       UpdateType.MINOR,
       {...this.#film, userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}},
+      this.#mode,
+      this.#popupScroll,
     );
   };
 
   #handleCommentsModelEvent = (updateType) => {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        this.#handleFilmsModelEvent(UpdateType.PATCH, this.#film);
-        break;
-    }
+    this.#handleFilmsModelEvent(updateType, this.#film);
   };
 
-  #handleCommentDelete = (commentId) => {
+  #handleCommentDelete = (commentId, scroll) => {
+    this.#popupScroll = scroll;
     this.#commentsModel.deleteComment(UpdateType.PATCH, commentId);
   };
 
-  #handleCommentSubmit = (localComment) => {
+  #handleCommentSubmit = (localComment, scroll) => {
     const comment = {
       'id': nanoid(),
       'author': 'Leo Malcolm',
@@ -168,6 +183,7 @@ export default class FilmPresenter {
       'emotion': localComment.emotion
     };
 
+    this.#popupScroll = scroll;
     this.#commentsModel.addComment(UpdateType.PATCH, comment);
   };
 

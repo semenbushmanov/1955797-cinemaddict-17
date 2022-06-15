@@ -281,7 +281,7 @@ export default class PopupView extends AbstractStatefulView {
 
   #handleDeleteClick = (evt) => {
     evt.preventDefault();
-    this._callback.deleteClick(evt.target.dataset.id);
+    this._callback.deleteClick(evt.target.dataset.id, this.#popupScroll);
   };
 
   #handleCommentSubmit = (evt) => {
@@ -290,7 +290,9 @@ export default class PopupView extends AbstractStatefulView {
       this._callback.commentSubmit({
         comment: this._state.inputDescription,
         emotion: this._state.emoji
-      });
+      },
+      this.#popupScroll,
+      );
     }
   };
 }

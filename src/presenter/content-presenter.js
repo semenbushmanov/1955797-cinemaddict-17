@@ -27,6 +27,9 @@ export default class ContentPresenter {
 
   #filmPresentersMap = new Map();
 
+  #openPopupId = null;
+  #popupScroll = null;
+
   constructor(contentContainer, filmsModel) {
     this.#contentContainer = contentContainer;
     this.#filmsModel = filmsModel;
@@ -49,10 +52,15 @@ export default class ContentPresenter {
     this.#renderContent();
   };
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction = (actionType, updateType, update, popupMode, popupScroll) => {
     switch (actionType) {
       case UserAction.UPDATE_FILM:
+        if (popupMode === 'POPUP') {
+          this.#openPopupId = update.id;
+          this.#popupScroll = popupScroll;
+        }
         this.#filmsModel.updateFilm(updateType, update);
+        this.#openPopupId = null;
         break;
       case UserAction.ADD_COMMENT:
 
@@ -112,6 +120,12 @@ export default class ContentPresenter {
 
   #renderFilmCard = (film) => {
     const filmPresenter = new FilmPresenter(this.#filmsContainerComponent, this.#handleViewAction, this.#handleModeChange, this.#handleFilmsModelEvent);
+    if (film.id === this.#openPopupId) {
+      filmPresenter.setPopupOpen();
+      filmPresenter.setPopupScroll(this.#popupScroll);
+    }
+    console.log(film.id);
+    console.log(this.#openPopupId);
     filmPresenter.init(film);
     this.#filmPresentersMap.set(film.id, filmPresenter);
   };
