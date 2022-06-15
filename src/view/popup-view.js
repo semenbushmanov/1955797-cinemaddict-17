@@ -1,3 +1,4 @@
+import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate } from '../utils/film.js';
 import { getDuration } from '../utils/film.js';
@@ -255,7 +256,7 @@ export default class PopupView extends AbstractStatefulView {
   #handleInputDescription = (evt) => {
     evt.preventDefault();
     this._setState({
-      inputDescription: evt.target.value
+      inputDescription: he.encode(evt.target.value)
     });
   };
 
