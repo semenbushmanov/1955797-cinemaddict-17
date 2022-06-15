@@ -62,11 +62,9 @@ export default class ContentPresenter {
         this.#filmsModel.updateFilm(updateType, update);
         this.#openPopupId = null;
         break;
-      case UserAction.ADD_COMMENT:
-
-        break;
-      case UserAction.DELETE_COMMENT:
-
+      case UserAction.UPDATE_COMMENT:
+        this.#popupScroll = popupScroll;
+        this.#filmsModel.updateFilm(updateType, update);
         break;
     }
   };
@@ -74,6 +72,7 @@ export default class ContentPresenter {
   #handleFilmsModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
+        this.#filmPresentersMap.get(data.id).setPopupScroll(this.#popupScroll);
         this.#filmPresentersMap.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
@@ -81,6 +80,7 @@ export default class ContentPresenter {
         this.#renderContent();
         break;
       case UpdateType.MAJOR:
+        this.#openPopupId = null;
         this.#clearContent({resetRenderedFilmsCount: true, resetSortType: true});
         this.#renderContent();
         break;
@@ -119,13 +119,12 @@ export default class ContentPresenter {
   };
 
   #renderFilmCard = (film) => {
-    const filmPresenter = new FilmPresenter(this.#filmsContainerComponent, this.#handleViewAction, this.#handleModeChange, this.#handleFilmsModelEvent);
+    const filmPresenter = new FilmPresenter(this.#filmsContainerComponent, this.#handleViewAction, this.#handleModeChange);
     if (film.id === this.#openPopupId) {
       filmPresenter.setPopupOpen();
       filmPresenter.setPopupScroll(this.#popupScroll);
     }
-    console.log(film.id);
-    console.log(this.#openPopupId);
+
     filmPresenter.init(film);
     this.#filmPresentersMap.set(film.id, filmPresenter);
   };
@@ -168,9 +167,6 @@ export default class ContentPresenter {
     if (resetRenderedFilmsCount) {
       this.#renderedFilmsCount = FILM_COUNT_PER_STEP;
     } else {
-      // На случай, если перерисовка доски вызвана
-      // уменьшением количества задач (например, удаление или перенос в архив)
-      // нужно скорректировать число показанных задач
       this.#renderedFilmsCount = Math.min(filmsCount, this.#renderedFilmsCount);
     }
 

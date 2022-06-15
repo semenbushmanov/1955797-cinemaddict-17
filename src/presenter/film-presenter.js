@@ -19,15 +19,13 @@ export default class FilmPresenter {
   #changeData = null;
   #changeMode = null;
   #commentsModel = null;
-  #handleFilmsModelEvent = null;
   #mode = Mode.DEFAULT;
   #popupScroll = 0;
 
-  constructor(filmsContainer, changeData, changeMode, handleFilmsModelEvent) {
+  constructor(filmsContainer, changeData, changeMode) {
     this.#filmsContainerComponent = filmsContainer.element;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
-    this.#handleFilmsModelEvent = handleFilmsModelEvent;
 
     this.#commentsModel = new CommentsModel();
     this.#commentsModel.addObserver(this.#handleCommentsModelEvent);
@@ -166,7 +164,13 @@ export default class FilmPresenter {
   };
 
   #handleCommentsModelEvent = (updateType) => {
-    this.#handleFilmsModelEvent(updateType, this.#film);
+    this.#changeData(
+      UserAction.UPDATE_COMMENT,
+      updateType,
+      this.#film,
+      this.#mode,
+      this.#popupScroll,
+    );
   };
 
   #handleCommentDelete = (commentId, scroll) => {
@@ -186,5 +190,4 @@ export default class FilmPresenter {
     this.#popupScroll = scroll;
     this.#commentsModel.addComment(UpdateType.PATCH, comment);
   };
-
 }

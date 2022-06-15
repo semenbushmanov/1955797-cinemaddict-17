@@ -281,12 +281,14 @@ export default class PopupView extends AbstractStatefulView {
 
   #handleDeleteClick = (evt) => {
     evt.preventDefault();
+    this.#popupScroll = this.element.scrollTop;
     this._callback.deleteClick(evt.target.dataset.id, this.#popupScroll);
   };
 
   #handleCommentSubmit = (evt) => {
     if (isCtrlEnterKey(evt) && Boolean(this._state.emoji) && Boolean(this._state.inputDescription)) {
       evt.preventDefault();
+      this.#popupScroll = this.element.scrollTop;
       this._callback.commentSubmit({
         comment: this._state.inputDescription,
         emotion: this._state.emoji

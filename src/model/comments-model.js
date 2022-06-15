@@ -14,7 +14,7 @@ export class CommentsModel extends Observable {
       ...this.#comments,
     ];
 
-    this._notify(updateType, comment);
+    this._notify(updateType);
   };
 
   deleteComment = (updateType, commentId) => {
