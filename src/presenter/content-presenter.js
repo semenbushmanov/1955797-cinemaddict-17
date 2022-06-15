@@ -1,7 +1,7 @@
 import { render, remove } from '../framework/render.js';
 import { sortByDate, sortByRating } from '../utils/film.js';
 import { filter } from '../utils/filter.js';
-import { SortType, UpdateType, UserAction, Mode } from '../const.js';
+import { SortType, UpdateType, UserAction, Mode, FilterType } from '../const.js';
 import SortView from '../view/sort-view.js';
 import SectionFilmsView from '../view/section-films-view.js';
 import FilmsListView from '../view/films-list-view.js';
@@ -18,14 +18,15 @@ export default class ContentPresenter {
   #filterModel = null;
   #sortComponent = null;
   #showMoreButtonComponent = null;
+  #noFilmsComponent = null;
 
   #renderedFilmsCount = FILM_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
+  #filterType = FilterType.ALL;
 
   #sectionFilmsComponent = new SectionFilmsView();
   #filmsListComponent = new FilmsListView();
   #filmsContainerComponent = new FilmsContainerView();
-  #noFilmsComponent = new NoFilmsView();
 
   #filmPresentersMap = new Map();
 
@@ -42,9 +43,9 @@ export default class ContentPresenter {
   }
 
   get films() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const films = this.#filmsModel.films;
-    const filteredFilms = filter[filterType](films);
+    const filteredFilms = filter[this.#filterType](films);
 
     switch (this.#currentSortType) {
       case SortType.DATE:
@@ -144,6 +145,7 @@ export default class ContentPresenter {
   };
 
   #renderNoFilms = () => {
+    this.#noFilmsComponent = new NoFilmsView(this.#filterType);
     render(this.#noFilmsComponent, this.#contentContainer);
   };
 
@@ -166,11 +168,14 @@ export default class ContentPresenter {
     this.#filmPresentersMap.clear();
 
     remove(this.#sortComponent);
-    remove(this.#noFilmsComponent);
     remove(this.#showMoreButtonComponent);
     remove(this.#filmsContainerComponent);
     remove(this.#filmsListComponent);
     remove(this.#sectionFilmsComponent);
+
+    if (this.#noFilmsComponent) {
+      remove(this.#noFilmsComponent);
+    }
 
     if (resetRenderedFilmsCount) {
       this.#renderedFilmsCount = FILM_COUNT_PER_STEP;
