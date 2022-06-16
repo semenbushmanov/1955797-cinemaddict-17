@@ -155,4 +155,8 @@ export const generateFilmDescription = () => {
   return randomFilmDescription;
 };
 
-export const generateComment = () => getRandomItem(FILMS_COMMENTS);
+export const generateComment = () => {
+  const comment = getRandomItem(FILMS_COMMENTS);
+  const randomComment = {...comment, id: nanoid()};
+  return randomComment;
+};
