@@ -72,7 +72,6 @@ export default class ContentPresenter {
           this.#popupScroll = popupScroll;
         }
         this.#filmsModel.updateFilm(updateType, update);
-        this.#openPopupId = null;
         break;
       case UserAction.UPDATE_COMMENT:
         this.#popupScroll = popupScroll;
@@ -140,6 +139,7 @@ export default class ContentPresenter {
     if (film.id === this.#openPopupId) {
       filmPresenter.setPopupOpen();
       filmPresenter.setPopupScroll(this.#popupScroll);
+      this.#openPopupId = null;
     }
 
     filmPresenter.init(film);
