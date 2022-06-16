@@ -23,3 +23,4 @@ render(new StatisticsView(filmsModel.films), siteFooterStatisticsElement);
 
 filterPresenter.init();
 contentPresenter.init();
+filmsModel.init();

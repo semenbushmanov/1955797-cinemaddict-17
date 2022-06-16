@@ -8,6 +8,7 @@ import FilmsListView from '../view/films-list-view.js';
 import FilmsContainerView from '../view/films-container-view.js';
 import ShowMoreButtonView from '../view/show-more-button-view.js';
 import NoFilmsView from '../view/no-films-view.js';
+import LoadingView from '../view/loading-view.js';
 import FilmPresenter from './film-presenter.js';
 
 const FILM_COUNT_PER_STEP = 5;
@@ -23,10 +24,12 @@ export default class ContentPresenter {
   #renderedFilmsCount = FILM_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.ALL;
+  #isLoading = true;
 
   #sectionFilmsComponent = new SectionFilmsView();
   #filmsListComponent = new FilmsListView();
   #filmsContainerComponent = new FilmsContainerView();
+  #loadingComponent = new LoadingView();
 
   #filmPresentersMap = new Map();
 
@@ -93,6 +96,11 @@ export default class ContentPresenter {
         this.#clearContent({resetRenderedFilmsCount: true, resetSortType: true});
         this.#renderContent();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderContent();
+        break;
     }
   };
 
@@ -144,6 +152,10 @@ export default class ContentPresenter {
     render(this.#sortComponent,this.#contentContainer);
   };
 
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#contentContainer);
+  };
+
   #renderNoFilms = () => {
     this.#noFilmsComponent = new NoFilmsView(this.#filterType);
     render(this.#noFilmsComponent, this.#contentContainer);
@@ -167,6 +179,7 @@ export default class ContentPresenter {
     this.#filmPresentersMap.forEach((presenter) => presenter.destroy());
     this.#filmPresentersMap.clear();
 
+    remove(this.#loadingComponent);
     remove(this.#sortComponent);
     remove(this.#showMoreButtonComponent);
     remove(this.#filmsContainerComponent);
@@ -189,6 +202,11 @@ export default class ContentPresenter {
   };
 
   #renderContent =() => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     const films = this.films;
     const filmsCount = films.length;
 
