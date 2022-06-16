@@ -20,6 +20,7 @@ export default class ContentPresenter {
   #sortComponent = null;
   #showMoreButtonComponent = null;
   #noFilmsComponent = null;
+  #filmApiService = null;
 
   #renderedFilmsCount = FILM_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
@@ -36,10 +37,11 @@ export default class ContentPresenter {
   #openPopupId = null;
   #popupScroll = null;
 
-  constructor(contentContainer, filmsModel, filterModel) {
+  constructor(contentContainer, filmsModel, filterModel, filmApiService) {
     this.#contentContainer = contentContainer;
     this.#filmsModel = filmsModel;
     this.#filterModel = filterModel;
+    this.#filmApiService = filmApiService;
 
     this.#filmsModel.addObserver(this.#handleFilmsModelEvent);
     this.#filterModel.addObserver(this.#handleFilmsModelEvent);
@@ -135,7 +137,7 @@ export default class ContentPresenter {
   };
 
   #renderFilmCard = (film) => {
-    const filmPresenter = new FilmPresenter(this.#filmsContainerComponent, this.#handleViewAction, this.#handleModeChange);
+    const filmPresenter = new FilmPresenter(this.#filmsContainerComponent, this.#handleViewAction, this.#handleModeChange, this.#filmApiService);
     if (film.id === this.#openPopupId) {
       filmPresenter.setPopupOpen();
       filmPresenter.setPopupScroll(this.#popupScroll);

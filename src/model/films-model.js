@@ -47,13 +47,15 @@ export default class FilmsModel extends Observable {
   };
 
   #adaptToClient = (film) => {
-    const release = {...film['film_info']['release'],
+    const release = {
+      ...film['film_info']['release'],
       releaseCountry: film['film_info']['release']['release_country'],
     };
 
     delete release['release_country'];
 
-    const filmInfo = {...film['film_info'],
+    const filmInfo = {
+      ...film['film_info'],
       alternativeTitle: film['film_info']['alternative_title'],
       totalRating: film['film_info']['total_rating'],
       ageRating: film['film_info']['age_rating'],
@@ -64,7 +66,8 @@ export default class FilmsModel extends Observable {
     delete filmInfo['total_rating'];
     delete filmInfo['age_rating'];
 
-    const userDetails = {...film['user_details'],
+    const userDetails = {
+      ...film['user_details'],
       alreadyWatched: film['user_details']['already_watched'],
       watchingDate: film['user_details']['watching_date'],
     };
@@ -72,7 +75,8 @@ export default class FilmsModel extends Observable {
     delete userDetails['already_watched'];
     delete userDetails['watching_date'];
 
-    const adaptedFilm = {...film,
+    const adaptedFilm = {
+      ...film,
       filmInfo: filmInfo,
       userDetails: userDetails,
     };
