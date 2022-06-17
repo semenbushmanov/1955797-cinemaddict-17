@@ -98,6 +98,25 @@ export default class FilmPresenter {
     }
   };
 
+  setSubmitting = () => {
+    if (this.#mode === Mode.POPUP) {
+      this.#popupComponent.updateElement({
+        isDisabled: true,
+      });
+      this.#popupComponent.element.scroll(0, this.#popupScroll);
+    }
+  };
+
+  setDeleting = () => {
+    if (this.#mode === Mode.POPUP) {
+      this.#popupComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+      this.#popupComponent.element.scroll(0, this.#popupScroll);
+    }
+  };
+
   #openPopup = () => {
     render(this.#popupComponent, document.body);
     this.#popupComponent.element.scroll(0, this.#popupScroll);
@@ -111,7 +130,7 @@ export default class FilmPresenter {
     document.body.classList.remove('hide-overflow');
     this.#mode = Mode.DEFAULT;
     this.#popupScroll = 0;
-    this.renderComponents(); // restore popupComponent with all handlers after complete removal by command "remove(this.#popupComponent)" for future use.
+    this.renderComponents();
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   };
 
@@ -182,11 +201,13 @@ export default class FilmPresenter {
 
   #handleCommentDelete = (commentId, scroll) => {
     this.#popupScroll = scroll;
+    this.setDeleting();
     this.#commentsModel.deleteComment(UpdateType.PATCH, commentId);
   };
 
   #handleCommentSubmit = (localComment, scroll) => {
     this.#popupScroll = scroll;
+    this.setSubmitting();
     this.#commentsModel.addComment(UpdateType.PATCH, localComment, this.#film);
   };
 }

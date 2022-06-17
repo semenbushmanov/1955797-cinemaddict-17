@@ -7,7 +7,7 @@ import { isCtrlEnterKey } from '../utils/common.js';
 
 
 const createPopupTemplate = (film, commentaries) => {
-  const { comments, filmInfo, userDetails } = film;
+  const { comments, filmInfo, userDetails, isDisabled, isDeleting } = film;
   const { title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors, release, runtime, genre,description } = filmInfo;
   const releaseDate = humanizeFilmReleaseDate(release.date);
   const duration = getDuration(runtime);
@@ -28,7 +28,7 @@ const createPopupTemplate = (film, commentaries) => {
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
             <span class="film-details__comment-day">${commentDate}</span>
-            <button class="film-details__comment-delete" data-id="${id}">Delete</button>
+            <button ${isDisabled ? 'disabled' : ''} class="film-details__comment-delete" data-id="${id}">${isDeleting ? 'Deleting...' : 'Delete'}</button>
           </p>
         </div>
       </li>`
@@ -133,26 +133,26 @@ const createPopupTemplate = (film, commentaries) => {
               </div>
     
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${film.inputDescription}</textarea>
+                <textarea ${isDisabled ? 'disabled' : ''} class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${film.inputDescription}</textarea>
               </label>
     
               <div class="film-details__emoji-list">
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${film.emoji === 'smile'? 'checked': ''}>
+                <input ${isDisabled ? 'disabled' : ''} class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${film.emoji === 'smile'? 'checked': ''}>
                 <label class="film-details__emoji-label" for="emoji-smile">
                   <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
                 </label>
     
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${film.emoji === 'sleeping'? 'checked': ''}>
+                <input ${isDisabled ? 'disabled' : ''} class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${film.emoji === 'sleeping'? 'checked': ''}>
                 <label class="film-details__emoji-label" for="emoji-sleeping">
                   <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
                 </label>
     
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${film.emoji === 'puke'? 'checked': ''}>
+                <input ${isDisabled ? 'disabled' : ''} class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${film.emoji === 'puke'? 'checked': ''}>
                 <label class="film-details__emoji-label" for="emoji-puke">
                   <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
                 </label>
     
-                <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${film.emoji === 'angry'? 'checked': ''}>
+                <input ${isDisabled ? 'disabled' : ''} class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${film.emoji === 'angry'? 'checked': ''}>
                 <label class="film-details__emoji-label" for="emoji-angry">
                   <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
                 </label>
@@ -183,7 +183,9 @@ export default class PopupView extends AbstractStatefulView {
 
   static convertFilmToState = (film) => ({...film,
     emoji: null,
-    inputDescription: ''
+    inputDescription: '',
+    isDisabled: false,
+    isDeleting: false,
   });
 
   static convertStateToFilm = (state) => {
@@ -191,6 +193,8 @@ export default class PopupView extends AbstractStatefulView {
 
     delete film.emoji;
     delete film.inputDescription;
+    delete film.isDisabled;
+    delete film.isDeleting;
 
     return film;
   };
