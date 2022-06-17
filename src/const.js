@@ -20,9 +20,16 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 export const Mode = {
   DEFAULT: 'DEFAULT',
   POPUP: 'POPUP',
+};
+
+export const CommentAction = {
+  GET_COMMENTS: 'GET_COMMENTS',
+  ADD_COMMENT: 'ADD_COMMENT',
+  DELETE_COMMENT: 'DELETE_COMMENT',
 };

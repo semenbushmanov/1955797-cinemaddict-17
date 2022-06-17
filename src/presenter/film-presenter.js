@@ -3,7 +3,7 @@ import { isEscKey } from '../utils/common.js';
 import FilmCardView from '../view/film-card-view.js';
 import PopupView from '../view/popup-view.js';
 import { CommentsModel } from '../model/comments-model.js';
-import { UserAction, UpdateType, Mode } from '../const.js';
+import { UserAction, UpdateType, Mode, CommentAction } from '../const.js';
 import { nanoid } from 'nanoid';
 
 export default class FilmPresenter {
@@ -16,13 +16,15 @@ export default class FilmPresenter {
   #commentsModel = null;
   #mode = Mode.DEFAULT;
   #popupScroll = 0;
+  #filmApiService = null;
 
-  constructor(filmsContainer, changeData, changeMode) {
+  constructor(filmsContainer, changeData, changeMode, filmApiService) {
     this.#filmsContainerComponent = filmsContainer.element;
     this.#changeData = changeData;
     this.#changeMode = changeMode;
+    this.#filmApiService = filmApiService;
 
-    this.#commentsModel = new CommentsModel();
+    this.#commentsModel = new CommentsModel(this.#filmApiService);
     this.#commentsModel.addObserver(this.#handleCommentsModelEvent);
   }
 
@@ -32,7 +34,12 @@ export default class FilmPresenter {
 
   init = (film) => {
     this.#film = film;
+    this.#commentsModel.init(film);
 
+    this.renderComponents();
+  };
+
+  renderComponents = () => {
     const previousFilmCardComponent = this.#filmCardComponent;
     const previousPopupComponent = this.#popupComponent;
 
@@ -105,7 +112,7 @@ export default class FilmPresenter {
     document.body.classList.remove('hide-overflow');
     this.#mode = Mode.DEFAULT;
     this.#popupScroll = 0;
-    this.init(this.#film); // restore popupComponent with all handlers after complete removal by command "remove(this.#popupComponent)" for future use.
+    this.renderComponents(); // restore popupComponent with all handlers after complete removal by command "remove(this.#popupComponent)" for future use.
     document.removeEventListener('keydown', this.#handleEscKeyDown);
   };
 
@@ -158,14 +165,20 @@ export default class FilmPresenter {
     );
   };
 
-  #handleCommentsModelEvent = (updateType) => {
-    this.#changeData(
-      UserAction.UPDATE_COMMENT,
-      updateType,
-      this.#film,
-      this.#mode,
-      this.#popupScroll,
-    );
+  #handleCommentsModelEvent = (action) => {
+    switch (action) {
+      case CommentAction.GET_COMMENTS:
+        this.renderComponents();
+        break;
+      default:
+        this.#changeData(
+          UserAction.UPDATE_COMMENT,
+          action,
+          this.#film,
+          this.#mode,
+          this.#popupScroll,
+        );
+    }
   };
 
   #handleCommentDelete = (commentId, scroll) => {
