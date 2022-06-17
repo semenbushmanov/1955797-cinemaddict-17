@@ -4,7 +4,6 @@ import FilmCardView from '../view/film-card-view.js';
 import PopupView from '../view/popup-view.js';
 import { CommentsModel } from '../model/comments-model.js';
 import { UserAction, UpdateType, Mode, CommentAction } from '../const.js';
-import { nanoid } from 'nanoid';
 
 export default class FilmPresenter {
   #filmCardComponent = null;
@@ -187,15 +186,7 @@ export default class FilmPresenter {
   };
 
   #handleCommentSubmit = (localComment, scroll) => {
-    const comment = {
-      'id': nanoid(),
-      'author': 'Leo Malcolm',
-      'comment': localComment.comment,
-      'date': new Date().toISOString(),
-      'emotion': localComment.emotion
-    };
-
     this.#popupScroll = scroll;
-    this.#commentsModel.addComment(UpdateType.PATCH, comment);
+    this.#commentsModel.addComment(UpdateType.PATCH, localComment, this.#film);
   };
 }
