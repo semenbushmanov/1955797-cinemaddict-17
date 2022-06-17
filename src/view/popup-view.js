@@ -7,7 +7,7 @@ import { isCtrlEnterKey } from '../utils/common.js';
 
 
 const createPopupTemplate = (film, commentaries) => {
-  const { comments, filmInfo, userDetails, isDisabled, isDeleting } = film;
+  const { comments, filmInfo, userDetails, isDisabled, commentBeingDeleted } = film;
   const { title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors, release, runtime, genre,description } = filmInfo;
   const releaseDate = humanizeFilmReleaseDate(release.date);
   const duration = getDuration(runtime);
@@ -28,7 +28,7 @@ const createPopupTemplate = (film, commentaries) => {
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
             <span class="film-details__comment-day">${commentDate}</span>
-            <button ${isDisabled ? 'disabled' : ''} class="film-details__comment-delete" data-id="${id}">${isDeleting ? 'Deleting...' : 'Delete'}</button>
+            <button ${isDisabled ? 'disabled' : ''} class="film-details__comment-delete" data-id="${id}">${id === commentBeingDeleted ? 'Deleting...' : 'Delete'}</button>
           </p>
         </div>
       </li>`
@@ -185,7 +185,7 @@ export default class PopupView extends AbstractStatefulView {
     emoji: null,
     inputDescription: '',
     isDisabled: false,
-    isDeleting: false,
+    commentBeingDeleted: null,
   });
 
   static convertStateToFilm = (state) => {
@@ -194,7 +194,7 @@ export default class PopupView extends AbstractStatefulView {
     delete film.emoji;
     delete film.inputDescription;
     delete film.isDisabled;
-    delete film.isDeleting;
+    delete film.commentBeingDeleted;
 
     return film;
   };

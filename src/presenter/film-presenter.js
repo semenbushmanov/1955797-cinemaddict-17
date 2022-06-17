@@ -107,11 +107,11 @@ export default class FilmPresenter {
     }
   };
 
-  setDeleting = () => {
+  setDeleting = (commentId) => {
     if (this.#mode === Mode.POPUP) {
       this.#popupComponent.updateElement({
         isDisabled: true,
-        isDeleting: true,
+        commentBeingDeleted: commentId,
       });
       this.#popupComponent.element.scroll(0, this.#popupScroll);
     }
@@ -201,7 +201,7 @@ export default class FilmPresenter {
 
   #handleCommentDelete = (commentId, scroll) => {
     this.#popupScroll = scroll;
-    this.setDeleting();
+    this.setDeleting(commentId);
     this.#commentsModel.deleteComment(UpdateType.PATCH, commentId);
   };
 
