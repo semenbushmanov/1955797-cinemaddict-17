@@ -3,7 +3,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFilmReleaseDate } from '../utils/film.js';
 import { getDuration } from '../utils/film.js';
 import { humanizeCommentDate } from '../utils/film.js';
-import { isCtrlEnterKey } from '../utils/common.js';
+import { isCtrlEnterKey } from '../utils/film.js';
 
 
 const createPopupTemplate = (film, commentaries) => {

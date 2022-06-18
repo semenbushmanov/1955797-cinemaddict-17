@@ -38,10 +38,12 @@ export default class UiBlocker {
 
   /** Метод для блокировки интерфейса */
   block = () => {
-    this.#startTime = Date.now();
-    this.#timerId = setTimeout(() => {
-      this.#addClass();
-    }, this.#lowerLimit);
+    if (!this.#timerId) {
+      this.#startTime = Date.now();
+      this.#timerId = setTimeout(() => {
+        this.#addClass();
+      }, this.#lowerLimit);
+    }
   };
 
   /** Метод для разблокировки интерфейса */
@@ -51,6 +53,7 @@ export default class UiBlocker {
 
     if (duration < this.#lowerLimit) {
       clearTimeout(this.#timerId);
+      this.#timerId = undefined;
       return;
     }
 
@@ -69,6 +72,7 @@ export default class UiBlocker {
 
   /** Метод, убирающий CSS-класс с элемента */
   #removeClass = () => {
+    this.#timerId = undefined;
     this.#element.classList.remove('ui-blocker--on');
   };
 }

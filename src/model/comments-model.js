@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import { CommentAction } from '../const.js';
+import { UpdateType, UserAction } from '../const.js';
 
 export class CommentsModel extends Observable {
   #filmsApiService = null;
@@ -21,20 +21,20 @@ export class CommentsModel extends Observable {
       this.#comments = [];
     }
 
-    this._notify(CommentAction.GET_COMMENTS);
+    this._notify(UpdateType.INIT);
   };
 
-  addComment = async (updateType, comment, film) => {
+  addComment = async (comment, film) => {
     try {
       const response = await this.#filmsApiService.addComment(comment, film);
       this.#comments = response.comments;
-      this._notify(updateType);
+      this._notify(UserAction.ADD_COMMENT);
     } catch(err) {
       throw new Error('Can\'t add comment');
     }
   };
 
-  deleteComment = async (updateType, commentId) => {
+  deleteComment = async (commentId) => {
     const index = this.#comments.findIndex((comment) => comment.id === commentId);
 
     if (index === -1) {
@@ -44,7 +44,7 @@ export class CommentsModel extends Observable {
     try {
       await this.#filmsApiService.deleteComment(commentId);
       this.#comments.splice(index, 1);
-      this._notify(updateType);
+      this._notify(UserAction.DELETE_COMMENT);
     } catch(err) {
       throw new Error('Can\'t delete comment');
     }
