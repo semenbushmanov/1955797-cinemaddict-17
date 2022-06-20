@@ -1,4 +1,5 @@
 import { render, remove } from '../framework/render.js';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import { sortByDate, sortByRating } from '../utils/film.js';
 import { filter } from '../utils/filter.js';
 import { SortType, UpdateType, UserAction, Mode, FilterType } from '../const.js';
@@ -12,6 +13,10 @@ import LoadingView from '../view/loading-view.js';
 import FilmPresenter from './film-presenter.js';
 
 const FILM_COUNT_PER_STEP = 5;
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class ContentPresenter {
   #contentContainer = null;
@@ -33,6 +38,8 @@ export default class ContentPresenter {
   #loadingComponent = new LoadingView();
 
   #filmPresentersMap = new Map();
+
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   #openPopupId = null;
   #popupScroll = null;
@@ -66,20 +73,32 @@ export default class ContentPresenter {
     this.#renderContent();
   };
 
-  #handleViewAction = (actionType, updateType, update, popupMode, popupScroll) => {
+  #handleViewAction = async (actionType, updateType, update, popupMode, popupScroll) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.UPDATE_FILM:
         if (popupMode === Mode.POPUP) {
           this.#openPopupId = update.id;
           this.#popupScroll = popupScroll;
         }
-        this.#filmsModel.updateFilm(updateType, update);
+        try {
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch(err) {
+          this.#filmPresentersMap.get(update.id).setAborting(UserAction.UPDATE_FILM);
+        }
         break;
-      case UserAction.UPDATE_COMMENT:
+      case UserAction.ADD_COMMENT:
         this.#popupScroll = popupScroll;
-        this.#filmsModel.updateFilm(updateType, update);
+        try {
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch(err) {
+          this.#filmPresentersMap.get(update.id).renderComponents();
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleFilmsModelEvent = (updateType, data) => {
@@ -137,7 +156,14 @@ export default class ContentPresenter {
   };
 
   #renderFilmCard = (film) => {
-    const filmPresenter = new FilmPresenter(this.#filmsContainerComponent, this.#handleViewAction, this.#handleModeChange, this.#filmApiService);
+    const filmPresenter = new FilmPresenter(
+      this.#filmsContainerComponent,
+      this.#handleViewAction,
+      this.#handleModeChange,
+      this.#filmApiService,
+      this.#uiBlocker
+    );
+
     if (film.id === this.#openPopupId) {
       filmPresenter.setPopupOpen();
       filmPresenter.setPopupScroll(this.#popupScroll);

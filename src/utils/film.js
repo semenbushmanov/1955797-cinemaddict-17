@@ -6,6 +6,8 @@ export const humanizeFilmReleaseDate = (date) => dayjs(date).format('DD MMMM YYY
 export const humanizeCommentDate = (date) => dayjs(date).fromNow();
 export const getYearFromDate = (date) => dayjs(date).format('YYYY');
 export const getDuration = (mins) => `${Math.floor(mins / 60)}h ${mins % 60}m`;
+export const isEscKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
+export const isCtrlEnterKey = (evt) => evt.ctrlKey && evt.key === 'Enter';
 
 const getWeightForNullDate = (dateA, dateB) => {
   if (dateA === null && dateB === null) {

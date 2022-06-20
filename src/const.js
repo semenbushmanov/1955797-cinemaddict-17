@@ -13,7 +13,8 @@ export const SortType = {
 
 export const UserAction = {
   UPDATE_FILM: 'UPDATE_FILM',
-  UPDATE_COMMENT: 'UPDATE_COMMENT',
+  ADD_COMMENT: 'ADD_COMMENT',
+  DELETE_COMMENT: 'DELETE_COMMENT',
 };
 
 export const UpdateType = {
@@ -26,10 +27,4 @@ export const UpdateType = {
 export const Mode = {
   DEFAULT: 'DEFAULT',
   POPUP: 'POPUP',
-};
-
-export const CommentAction = {
-  GET_COMMENTS: 'GET_COMMENTS',
-  ADD_COMMENT: 'ADD_COMMENT',
-  DELETE_COMMENT: 'DELETE_COMMENT',
 };
