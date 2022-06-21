@@ -223,12 +223,9 @@ export default class FilmPresenter {
       case UpdateType.INIT:
         this.renderComponents();
         break;
-      case UserAction.DELETE_COMMENT:
-        this.renderComponents();
-        break;
-      case UserAction.ADD_COMMENT:
+      default:
         this.#changeData(
-          UserAction.ADD_COMMENT,
+          update,
           UpdateType.PATCH,
           this.#film,
           this.#mode,

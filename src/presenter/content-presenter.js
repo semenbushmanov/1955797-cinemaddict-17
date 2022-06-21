@@ -88,14 +88,13 @@ export default class ContentPresenter {
           this.#filmPresentersMap.get(update.id).setAborting(UserAction.UPDATE_FILM);
         }
         break;
-      case UserAction.ADD_COMMENT:
+      default:
         this.#popupScroll = popupScroll;
         try {
           await this.#filmsModel.updateFilm(updateType, update);
         } catch(err) {
           this.#filmPresentersMap.get(update.id).renderComponents();
         }
-        break;
     }
 
     this.#uiBlocker.unblock();
