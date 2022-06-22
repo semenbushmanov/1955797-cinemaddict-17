@@ -188,17 +188,6 @@ export default class PopupView extends AbstractStatefulView {
     commentBeingDeleted: null,
   });
 
-  static convertStateToFilm = (state) => {
-    const film = {...state};
-
-    delete film.emoji;
-    delete film.inputDescription;
-    delete film.isDisabled;
-    delete film.commentBeingDeleted;
-
-    return film;
-  };
-
   setClickHandler = (callback) => {
     this._callback.click = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#handleClick);

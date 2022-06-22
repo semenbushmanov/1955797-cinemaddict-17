@@ -2,6 +2,9 @@ import { render, replace, remove } from '../framework/render.js';
 import UserProfileView from '../view/user-profile-view.js';
 import { filter } from '../utils/filter.js';
 
+const RANK_NOVICE_THRESHOLD = 10;
+const RANK_FAN_THRESHOLD = 20;
+
 export default class UserProfilePresenter {
   #userProfileContainer = null;
   #filmsModel = null;
@@ -42,11 +45,11 @@ export default class UserProfilePresenter {
   };
 
   #getUserRank = (watchedFilms) => {
-    if (watchedFilms < 11) {
+    if (watchedFilms <= RANK_NOVICE_THRESHOLD) {
       return 'Novice';
     }
 
-    if (watchedFilms < 21) {
+    if (watchedFilms <= RANK_FAN_THRESHOLD) {
       return 'Fan';
     }
 
